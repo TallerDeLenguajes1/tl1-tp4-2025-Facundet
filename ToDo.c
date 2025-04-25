@@ -18,17 +18,18 @@ typedef struct Nodo
 // ---- FUNCIONES ----
 Nodo *CrearListaVacia();
 Nodo *CrearNodo(int id);
-Nodo * InsertarNodo(Nodo* nodo, Nodo** start);
+Nodo * InsertarNodo(Nodo* nodo, Nodo** start); //EN ESTAR VA LA LISTA A DONDE VOY A INSERTAR 
 void mostrarLista(Nodo* lista);
 void mostrarDatosNodoEncontrado (Nodo* lista);
 Nodo* BuscarPorID(Nodo* start, int ID); //Start representa el comienzo de la lista que quiero recorrer
+Nodo* QuitarNodo(Nodo** start, int ID); //PARA QUITAR EL NODO DEBO UTILIZAR PUNTERO DOBLE ASÍ SEA MÁS FÁCIL
 
 
 
 int main()
 {
     srand(time(NULL));
-    int id = 1000, seguirConTarea, buscarID;
+    int id = 1000, seguirConTarea, buscarID, IDMover;
 
     Nodo *ListaTareasPendientes = CrearListaVacia(); // creo dos listas
     Nodo *ListaTareasRealizadas = CrearListaVacia();
@@ -39,7 +40,7 @@ int main()
         Nodo *tarea1 = CrearNodo(id++);
         printf("\nQuiere ingresar una tarea nueva?\n>> SI = 1\n>> NO = 0\nRespuesta: \n");
         scanf("%d", &seguirConTarea);
-        InsertarNodo(tarea1, &ListaTareasPendientes); // -- USO & PARA OBTENER LA DIRECCION DE MEMORIA DEL PUTNERO DOBLE -- 
+        InsertarNodo(tarea1, &ListaTareasPendientes); // -- USO apersan PARA OBTENER LA DIRECCION DE MEMORIA DEL PUTNERO DOBLE -- 
     } while (seguirConTarea == 1);
 
     printf("\n//LISTA DE TAREAS PENDIENTES:");
@@ -51,6 +52,19 @@ int main()
     scanf("%d", &buscarID);
     Nodo* NodoEncontrado = BuscarPorID(ListaTareasPendientes, buscarID);
     mostrarDatosNodoEncontrado (NodoEncontrado);
+
+    printf("\n\nIngrese el ID de la tarea que desea marcar como realizada: ");
+    fflush(stdin);
+    scanf("%d", &IDMover);
+    Nodo* TareaMovida = QuitarNodo(&ListaTareasPendientes, IDMover); // USO & PORQUE USÉ UN PUNTERO DOBLE EN ESA FUNCION
+    if (TareaMovida != NULL)
+    {
+        InsertarNodo(TareaMovida, &ListaTareasRealizadas);
+        printf("\nLa tarea fue marcada como realizada con exito."); 
+    }
+    printf("\n//LISTA DE TAREAS REALIZADAS: ");
+    mostrarLista(ListaTareasRealizadas);
+    
 
     return 0;
 }
@@ -128,4 +142,23 @@ Nodo* BuscarPorID(Nodo* start, int ID){
         start = start->Siguiente; //ITERO EN LA LISTA
     }
     return NULL;
+}
+
+Nodo* QuitarNodo(Nodo** start, int ID){
+    Nodo ** aux = start;
+
+    while (*aux != NULL && (*aux)->T->TareaID == ID)
+    {
+        aux = &(*aux)->Siguiente;
+    }
+
+    if (aux != NULL)
+    {
+        Nodo* temp = *aux;   // Guardamos el nodo a quitar
+        *aux = (*aux)->Siguiente;   // Enlazamos el anterior con el siguiente
+        temp->Siguiente = NULL;  // Desconectamos el nodo quitado
+        return temp;    // Lo devolvemos para usarlo después
+    }
+    return NULL;     // Si no se encontró el ID, devolvemos NULL
+    
 }
