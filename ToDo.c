@@ -20,14 +20,15 @@ Nodo *CrearListaVacia();
 Nodo *CrearNodo(int id);
 Nodo * InsertarNodo(Nodo* nodo, Nodo** start);
 void mostrarLista(Nodo* lista);
-
+void mostrarDatosNodoEncontrado (Nodo* lista);
+Nodo* BuscarPorID(Nodo* start, int ID); //Start representa el comienzo de la lista que quiero recorrer
 
 
 
 int main()
 {
     srand(time(NULL));
-    int id = 1000, seguirConTarea;
+    int id = 1000, seguirConTarea, buscarID;
 
     Nodo *ListaTareasPendientes = CrearListaVacia(); // creo dos listas
     Nodo *ListaTareasRealizadas = CrearListaVacia();
@@ -44,12 +45,15 @@ int main()
     printf("\n//LISTA DE TAREAS PENDIENTES:");
     mostrarLista(ListaTareasPendientes);
 
+     //BUSCAR LISTA 
+    printf("\n\nIngrese el ID que quiere buscar en la lista antes impresa: ");
+    fflush(stdin);
+    scanf("%d", &buscarID);
+    Nodo* NodoEncontrado = BuscarPorID(ListaTareasPendientes, buscarID);
+    mostrarDatosNodoEncontrado (NodoEncontrado);
+
     return 0;
 }
-
-
-
-
 
 // ---- FUNCIONES ----
 Nodo *CrearListaVacia()
@@ -81,7 +85,6 @@ Nodo *CrearNodo(int id)
         scanf("%d", &nuevoNodo->T->Duracion);
     } while (nuevoNodo->T->Duracion > 100 || nuevoNodo->T->Duracion < 10);
     
-
     return nuevoNodo;
 };
 
@@ -106,8 +109,23 @@ void mostrarLista(Nodo* lista){
     
 }
 
-/*
-int TareaID;       // Numérico autoincremental comenzando en 1000
-    char *Descripcion; //
-    int Duracion; 
-*/
+void mostrarDatosNodoEncontrado (Nodo* lista){
+    printf("\nLos datos del nodo encontrado por ID son: ");
+    printf("\nTareaID: %d", lista->T->TareaID);
+    printf("\nDescripcion de la tarea: %s", lista->T->Descripcion);
+    printf("\nDuracion: %d minutos", lista->T->Duracion);
+}
+
+// ----- BUSCAR EN LA LISTA
+Nodo* BuscarPorID(Nodo* start, int ID){
+    //Start representa el comienzo de la lista que quiero recorrer
+    while (start != NULL)
+    {
+        if (start->T->TareaID == ID)
+        {
+            return start; //DEVUELVO LA DIRECCION DE LA LISTA
+        }
+        start = start->Siguiente; //ITERO EN LA LISTA
+    }
+    return NULL;
+}
